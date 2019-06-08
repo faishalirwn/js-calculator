@@ -1,0 +1,115 @@
+/* Minimal CSS Reset https://alligator.io/css/minimal-css-reset/ */
+html {
+  box-sizing: border-box;
+  font-size: 26px;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, ol, ul {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  font-family: sans-serif;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ============================== */
+
+body {
+  background-image: linear-gradient(-20deg, #e9defa 0%, #fbfcdb 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+.container {
+  margin: 0 auto;
+  width: 500px;
+  height: 700px;
+  background-color: lightgrey; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 15px;
+  background-image: radial-gradient( circle farthest-corner at -4% -12.9%,  rgba(74,98,110,1) 0.3%, rgba(30,33,48,1) 90.2% );
+  box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.6);
+}
+
+.calculator {
+  width: 90%;
+  height: 90%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  grid-template-areas: 
+    "operation operation operation operation"
+    "clear result result result"
+    "num num num operator"
+    "num num num operator"
+    "num num num operator"
+    "num num num operator";
+}
+
+.operation,
+.result {
+  overflow: scroll;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.operation {
+  grid-area: operation;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.result {
+  grid-area: result;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.clear-btn {
+  grid-area: clear;
+}
+
+.num-pad {
+  grid-area: num;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+}
+
+.operator-pad {
+  grid-area: operator;
+  display: grid;
+  grid-template: repeat(5, 1fr) / 1fr
+}
+
+button {
+  font-size: 22px;
+  background-color: rgba(255, 255, 255, 0.75);
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: rgba(255, 255, 255, 0.5)
+}
+
+button:focus {
+  outline: none;
+}
