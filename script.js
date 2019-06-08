@@ -3,17 +3,38 @@ const numBtn = document.querySelectorAll('.num'),
       clearBtn = document.querySelector('.clear'),
       deleteBtn = document.querySelector('.delete'),
       equalBtn = document.querySelector('.equal'),
-      operationNumbers = document.querySelector('.operation p'),
-      resultNumbers = document.querySelector('.result p');
+      pointBtn = document.querySelector('.point'),
+      operationNum = document.querySelector('.operation p'),
+      resultNum = document.querySelector('.result p');
 
-let currentNumber = '',
-    initialNumber = '',
-    accumulator = '',
-    operator = '';
-    // operationDisplay = '';
+let numInputted = '',
+    inputtedNumArray = [],
+    numOperated = '',
+    operatedNumArray = [],
+    operatorPressed = '',
+    operatorArray = [];
 
-function evaluate(a, op, b) {
-  switch (op) {
+const operators = {
+  '+': (a, b) => a + b,
+  '-': (a, b) => a - b,
+  '*': (a, b) => a * b,
+  '/': (a, b) => a / b,
+}
+
+function operate(operator, a, b) {
+
+  if (a === '') {
+    return b
+  }
+
+  if (b === '' && (operator === '*' || operator === '/')) {
+    b = 1
+  }
+    
+  a = Number(a)
+  b = Number(b)
+
+  switch (operator) {
     case '+':
       return a + b;
       break;
@@ -24,9 +45,6 @@ function evaluate(a, op, b) {
       return a * b;
       break;
     case '/':
-      if (b === 0) {
-        return "Can't divide by 0"
-      }
       return a / b;
       break;
     default:
@@ -34,78 +52,111 @@ function evaluate(a, op, b) {
   }
 }
 
+function reset() {
+  numInputted = '',
+  inputtedNumArray = [],
+  numOperated = '',
+  operatedNumArray = [],
+  operatorPressed = '',
+  operatorArray = [];
+
+  operationNum.textContent = '';
+  resultNum.textContent = '';
+}
+
 numBtn.forEach((el) => {
   el.addEventListener('click', (e) => {
+    const lastOperated = operatedNumArray[operatedNumArray.length - 1]
+
+    if (operatorPressed !== '' && numInputted === '') {
+      operatorArray.push(operatorPressed)
+    }
     
-    if (el.textContent === '.' && ( currentNumber.includes('.') || currentNumber === '' ) ) {      
-      return
+    numInputted += el.textContent
+
+    operationNum.textContent += el.textContent
+
+    if (numOperated !== '' && operatedNumArray.length > 0) {
+      numOperated = operate(operatorPressed, lastOperated, numInputted)
+    } else if (numOperated !== '' && operatedNumArray.length === 0) {
+      numOperated = operate(operatorPressed, numOperated, numInputted)
     }
 
-    if (operator === '') {
-      initialNumber += el.textContent;
-
-      resultNumbers.textContent = initialNumber;
-    } else {
-      currentNumber += el.textContent;
-
-      if (initialNumber !== '') {
-        accumulator = evaluate(Number(initialNumber), operator, Number(currentNumber));
-      } else {
-        accumulator = evaluate(Number(accumulator), operator, Number(currentNumber));
-      }
-      
-      resultNumbers.textContent = accumulator;
-      initialNumber = ''
-    }
-
-    // operationDisplay += el.textContent;
-    operationNumbers.textContent += el.textContent;
-
-    console.log(accumulator)
-    console.log(currentNumber)
-    console.log(operator)
+    resultNum.textContent = numOperated
   })
 })
 
 operatorBtn.forEach((el) => {
   el.addEventListener('click', (e) => {
-    if (currentNumber === '' && initialNumber === '' && operator !== '') return
-
-    // operationDisplay += el.textContent
-    operationNumbers.textContent += el.textContent;
-
-    operator = el.getAttribute('value');
-
-    currentNumber = ''
+    if (numInputted === '' && operatorPressed === '') return
+    operatorPressed = el.getAttribute('value')
     
+    if (numOperated === '') {
+      numOperated = operate(operatorPressed, numOperated, numInputted)    
+    }
+
+    if (numInputted === '' && operatorPressed !== '') {
+      operationNum.textContent = operationNum.textContent = operationNum.textContent.substr(0, operationNum.textContent.length - 1) + el.textContent
+    } else {
+      operationNum.textContent += el.textContent
+      inputtedNumArray.push(numInputted)
+      operatedNumArray.push(numOperated)
+    }
+
+    numInputted = ''
   })
 })
 
-clearBtn.addEventListener('click', (e) => {
-  accumulator = '',
-  currentNumber = '',
-  initialNumber = '',
-  operator = '',
-  operationDisplay = '';
+pointBtn.addEventListener('click', (e) => {
+  if (numInputted === '' || numInputted.includes('.')) return
+  numInputted += pointBtn.textContent
+  operationNum.textContent += pointBtn.textContent
 
-  operationNumbers.textContent = '';
-  resultNumbers.textContent = '';
+  resultNum.textContent = numOperated
 })
 
 equalBtn.addEventListener('click', (e) => {
+  if (numOperated === '') return
+  
+  const lastResult = numOperated
 
-  if (initialNumber === '' && accumulator === '') return
+  reset()
 
-  operator = '';
+  numInputted += lastResult
+  operationNum.textContent = lastResult
+})
 
-  resultNumbers.textContent = '';
-
-  if (initialNumber !== '' && operator === '') {
-    operationNumbers.textContent = initialNumber;
-  } else if (accumulator !== '') {
-    operationNumbers.textContent = accumulator;
+deleteBtn.addEventListener('click', (e) => {
+  if (numInputted.length <= 1 && operatorArray.length === 0) {
+    operationNum.textContent = operationNum.textContent.substr(0, operationNum.textContent.length - 1)
+    reset()
   }
 
-  
-  // operationDisplay = '';
+  const lastOperated = operatedNumArray[operatedNumArray.length - 1]
+  const lastInputted = inputtedNumArray[inputtedNumArray.length - 1]
+  const lastOperator = operatorArray[operatorArray.length - 1]
+
+  if (numInputted === '' && operatorArray.length > 0) {
+    operatorPressed = ''
+    numInputted = lastInputted
+    
+    operationNum.textContent = operationNum.textContent.substr(0, operationNum.textContent.length - 1)
+    
+    operatedNumArray.splice(-1,1)
+    inputtedNumArray.splice(-1,1)
+    operatorArray.splice(-1,1)
+
+    operator = lastOperator
+  } else if (numInputted !== '') {
+    numInputted = numInputted.substr(0, numInputted.length - 1)
+    operationNum.textContent = operationNum.textContent.substr(0, operationNum.textContent.length - 1)
+    
+    numOperated = operate(lastOperator, lastOperated, numInputted)
+
+    resultNum.textContent = numOperated
+  }
+})
+
+clearBtn.addEventListener('click', (e) => {
+  reset()
 })

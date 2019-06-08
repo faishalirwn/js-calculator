@@ -86,14 +86,14 @@ body {
   grid-area: clear;
 }
 
-.num-pad {
+.pad-1 {
   grid-area: num;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(4, 1fr);
 }
 
-.operator-pad {
+.pad-2 {
   grid-area: operator;
   display: grid;
   grid-template: repeat(5, 1fr) / 1fr
