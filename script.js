@@ -83,6 +83,9 @@ numBtn.forEach((el) => {
     }
 
     resultNum.textContent = numOperated
+
+    console.log('num numInputted', numInputted)
+    console.log('num numOperated', numOperated)
   })
 })
 
@@ -127,10 +130,6 @@ equalBtn.addEventListener('click', (e) => {
 })
 
 deleteBtn.addEventListener('click', (e) => {
-  if (numInputted.length <= 1 && operatorArray.length === 0) {
-    operationNum.textContent = operationNum.textContent.substr(0, operationNum.textContent.length - 1)
-    reset()
-  }
 
   const lastOperated = operatedNumArray[operatedNumArray.length - 1]
   const lastInputted = inputtedNumArray[inputtedNumArray.length - 1]
@@ -138,23 +137,44 @@ deleteBtn.addEventListener('click', (e) => {
 
   if (numInputted === '' && operatorArray.length > 0) {
     operatorPressed = ''
-    numInputted = lastInputted
     
     operationNum.textContent = operationNum.textContent.substr(0, operationNum.textContent.length - 1)
     
     operatedNumArray.splice(-1,1)
-    inputtedNumArray.splice(-1,1)
     operatorArray.splice(-1,1)
 
+    if (operatorArray.length === 0) {
+      numInputted = lastInputted
+      numOperated = ''
+      resultNum.textContent = ''
+    } else {
+      numOperated = operate(lastOperator, lastOperated, numInputted)
+      resultNum.textContent = numOperated
+    }
+
+    inputtedNumArray.splice(-1,1)
+
     operator = lastOperator
-  } else if (numInputted !== '') {
+
+  } else if (numInputted !== '' && operatorArray.length > 0) {
     numInputted = numInputted.substr(0, numInputted.length - 1)
     operationNum.textContent = operationNum.textContent.substr(0, operationNum.textContent.length - 1)
     
     numOperated = operate(lastOperator, lastOperated, numInputted)
 
     resultNum.textContent = numOperated
+  } else {
+    numInputted = numInputted.substr(0, numInputted.length - 1)
+    operationNum.textContent = operationNum.textContent.substr(0, operationNum.textContent.length - 1)
+
+    numOperated = ''
+
+    resultNum.textContent = ''
+
   }
+
+  console.log('del numInputted', numInputted)
+  console.log('del numOperated', numOperated)
 })
 
 clearBtn.addEventListener('click', (e) => {
